@@ -1,0 +1,54 @@
+Panels: []
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Alpha: 0.35
+      Cell Size: 0.1
+      Class: rviz_default_plugins/Grid
+      Color: 120; 130; 120
+      Enabled: true
+      Name: Grid
+      Plane: XY
+      Plane Cell Count: 14
+    - Alpha: 1
+      Class: rviz_default_plugins/RobotModel
+      Description Source: Topic
+      Description Topic:
+        Value: /robot_description
+      Enabled: true
+      Name: RobotModel
+    - Class: rviz_default_plugins/MarkerArray
+      Enabled: true
+      Name: PickerMarkers
+      Topic:
+        Value: /picker/markers
+    - Class: rviz_default_plugins/Image
+      Enabled: true
+      Name: 相机画面与决策面板
+      Normalize Range: true
+      Topic:
+        Value: /picker/camera/annotated
+  Enabled: true
+  Global Options:
+    Background Color: 34; 40; 36
+    Fixed Frame: base_link
+    Frame Rate: 30
+  Name: root
+  Tools:
+    - Class: rviz_default_plugins/MoveCamera
+  Value: true
+  Views:
+    Current:
+      Class: rviz_default_plugins/Orbit
+      Distance: 1.45
+      Focal Point:
+        X: 0.30
+        Y: -0.05
+        Z: 0.33
+      Name: Current View
+      Pitch: 0.26
+      Target Frame: <Fixed Frame>
+      Yaw: 1.30
+Window Geometry:
+  Height: 820
+  Width: 1280

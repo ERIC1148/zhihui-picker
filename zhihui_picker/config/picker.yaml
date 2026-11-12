@@ -1,0 +1,90 @@
+# 智汇蔬香采摘框架 · 默认配置（全仿真，开箱即用）
+# 用法: 另写一份只包含要改字段的文件，用 config:=a.yaml,b.yaml 叠加（后者覆盖前者）。
+mode: sim            # sim = 所有设备用仿真 | real = 每个设备按各自的 backend
+
+# ---------- 抓取力策略 ----------
+# plugin 可以是内置的 reference，也可以是 "包名.模块:类名" 形式的自定义策略
+force_policy:
+  plugin: reference
+  friction_mu: 1.0   # 参考策略的摩擦系数
+  step_n: 0.25       # 力的量化阶梯
+  f_min_n: 0.25
+  f_max_n: 7.0
+
+# ---------- 作物档案（示例值）----------
+crops:
+  tomato:
+    name_zh: 番茄
+    mass_range_g: [40, 400]
+    density_kg_m3: 980
+    max_force_n: 3.0               # 防压伤上限
+    hsv: {h: [345, 15], s_min: 0.55, v_min: 0.35}
+  eggplant:
+    name_zh: 茄子
+    mass_range_g: [80, 600]
+    density_kg_m3: 700
+    max_force_n: 5.0
+    hsv: {h: [255, 320], s_min: 0.30, v_min: 0.12}
+
+# ---------- 感知 ----------
+camera:
+  backend: realsense   # sim | realsense
+  width: 640
+  height: 480
+  fps: 30
+  serial: ''
+hand_eye:              # camera_link (x前 y左 z上) 在 base_link 下的位姿
+  xyz: [0.15, 0.0, 0.55]
+  rpy: [0.0, 0.5236, 0.0]
+detector:
+  backend: color       # color = HSV 颜色分割（零依赖）| yolo = Ultralytics YOLO
+  min_confidence: 0.5
+  min_area_px: 300
+  depth_range_m: [0.15, 1.5]
+  yolo_weights: ''
+  yolo_class_map: {}
+
+# ---------- 质量估计 ----------
+mass_estimator:
+  backend: mock        # mock | "包名.模块:类名"
+  mock_noise_sigma: 0.12
+
+# ---------- 机械臂 ----------
+arm:
+  backend: sim         # sim | "包名.模块:类名"
+  geometry: {z_base: 0.135, l1: 0.326, l2: 0.326, l_ee: 0.100,
+             m1: 0.60, m2: 0.55, lc1: 0.163, lc2: 0.200}
+  joint_lower: [-3.14, -1.57, -2.4, -3.14]
+  joint_upper: [3.14, 1.57, 2.4, 3.14]
+  control_hz: 50
+  max_joint_speed: 0.8        # rad/s
+  max_cart_speed: 0.15        # m/s
+  home_xyz: [0.34, 0.0, 0.42]
+  basket_xyz: [0.30, -0.30, 0.34]
+  workspace:                  # 允许抓取的目标区域 (base_link)，区域外的检测一律忽略
+    x: [0.25, 0.60]
+    y: [-0.35, 0.35]
+    z: [0.10, 0.55]
+
+# ---------- 平行夹爪 ----------
+gripper:
+  backend: sim         # sim | "包名.模块:类名"
+  open_gap_m: 0.096
+
+# ---------- 抓取流程 ----------
+pick:
+  approach_m: 0.08     # 预抓取点：沿径向后退的距离
+  lift_m: 0.08         # 抓住后上提的高度
+  max_attempts: 3
+  verify_radius_m: 0.035   # 上提后原位置此半径内仍看到同类果实 → 判定没夹牢
+  settle_s: 0.4
+  log_dir: ~/.zhihui_picker/logs
+
+# ---------- 仿真场景 ----------
+sim:
+  seed: 0
+  objects:
+    # true_min_force_n: 仿真里这个果实"至少要多大力才夹得住"
+    - {label: eggplant, position: [0.50, 0.08, 0.27],  width_m: 0.050, height_m: 0.17,  mass_g: 285, true_min_force_n: 2.5,  color: [112, 38, 160]}
+    - {label: tomato,   position: [0.47, -0.10, 0.30], width_m: 0.062, height_m: 0.058, mass_g: 150, true_min_force_n: 1.5,  color: [222, 40, 34]}
+    - {label: eggplant, position: [0.52, -0.01, 0.38], width_m: 0.046, height_m: 0.15,  mass_g: 240, true_min_force_n: 2.25, color: [118, 42, 168]}

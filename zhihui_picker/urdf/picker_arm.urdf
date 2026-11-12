@@ -1,0 +1,120 @@
+<?xml version="1.0"?>
+<!-- 四自由度采摘机械臂 + 平行夹爪（开放演示模型） -->
+<robot name="zhihui_finray_picker_arm">
+
+  <material name="fiberglass_dark"><color rgba="0.20 0.22 0.25 1.0"/></material>
+  <material name="turret_orange"><color rgba="0.92 0.42 0.12 1.0"/></material>
+  <material name="metal_silver"><color rgba="0.72 0.75 0.80 1.0"/></material>
+  <material name="finray_tpu_green"><color rgba="0.12 0.78 0.42 1.0"/></material>
+
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><mesh filename="package://zhihui_picker/meshes/base_turntable.stl"/></geometry>
+      <material name="fiberglass_dark"/>
+    </visual>
+  </link>
+
+  <link name="camera_link">
+    <visual>
+      <geometry><box size="0.028 0.095 0.028"/></geometry>
+      <material name="metal_silver"/>
+    </visual>
+  </link>
+  <joint name="hand_eye_fixed_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="camera_link"/>
+    <origin xyz="0.15 0.0 0.55" rpy="0 0.5236 0"/>
+  </joint>
+
+  <link name="shoulder_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><mesh filename="package://zhihui_picker/meshes/shoulder_turret.stl"/></geometry>
+      <material name="turret_orange"/>
+    </visual>
+  </link>
+  <joint name="joint1_yaw" type="revolute">
+    <parent link="base_link"/>
+    <child link="shoulder_link"/>
+    <origin xyz="0 0 0.065" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-3.14" upper="3.14" effort="60" velocity="2.0"/>
+  </joint>
+
+  <link name="upper_arm_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><mesh filename="package://zhihui_picker/meshes/upper_arm.stl"/></geometry>
+      <material name="fiberglass_dark"/>
+    </visual>
+  </link>
+  <joint name="joint2_shoulder" type="revolute">
+    <parent link="shoulder_link"/>
+    <child link="upper_arm_link"/>
+    <origin xyz="0 0 0.070" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-1.57" upper="1.57" effort="60" velocity="2.0"/>
+  </joint>
+
+  <link name="forearm_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><mesh filename="package://zhihui_picker/meshes/forearm.stl"/></geometry>
+      <material name="metal_silver"/>
+    </visual>
+  </link>
+  <joint name="joint3_elbow" type="revolute">
+    <parent link="upper_arm_link"/>
+    <child link="forearm_link"/>
+    <origin xyz="0 0 0.326" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-2.4" upper="2.4" effort="40" velocity="2.0"/>
+  </joint>
+
+  <link name="ee_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><mesh filename="package://zhihui_picker/meshes/wrist_palm.stl"/></geometry>
+      <material name="fiberglass_dark"/>
+    </visual>
+  </link>
+  <joint name="joint4_wrist" type="revolute">
+    <parent link="forearm_link"/>
+    <child link="ee_link"/>
+    <origin xyz="0 0 0.326" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-3.14" upper="3.14" effort="20" velocity="3.0"/>
+  </joint>
+
+  <link name="left_finger">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><mesh filename="package://zhihui_picker/meshes/finray_finger_left.stl"/></geometry>
+      <material name="finray_tpu_green"/>
+    </visual>
+  </link>
+  <joint name="gripper_left_joint" type="prismatic">
+    <parent link="ee_link"/>
+    <child link="left_finger"/>
+    <origin xyz="0.056 0.0 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="0.012" upper="0.052" effort="15" velocity="0.5"/>
+  </joint>
+
+  <link name="right_finger">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><mesh filename="package://zhihui_picker/meshes/finray_finger_right.stl"/></geometry>
+      <material name="finray_tpu_green"/>
+    </visual>
+  </link>
+  <joint name="gripper_right_joint" type="prismatic">
+    <parent link="ee_link"/>
+    <child link="right_finger"/>
+    <origin xyz="0.056 0.0 0" rpy="0 0 0"/>
+    <axis xyz="0 -1 0"/>
+    <limit lower="0.012" upper="0.052" effort="15" velocity="0.5"/>
+  </joint>
+
+</robot>
